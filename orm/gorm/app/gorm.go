@@ -51,6 +51,7 @@ type DbInfo struct {
 	DbUser     string
 	DbPassword string
 	DbName     string
+	DbSSL      string
 }
 
 func InitDBWithParameters(params DbInfo) {
@@ -59,7 +60,7 @@ func InitDBWithParameters(params DbInfo) {
 	default:
 		dbInfo = fmt.Sprintf(params.DbHost)
 	case "postgres":
-		dbInfo = fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable password=%s", params.DbHost, params.DbPort, params.DbUser, params.DbName, params.DbPassword)
+		dbInfo = fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=%s password=%s", params.DbHost, params.DbPort, params.DbUser, params.DbName, params.DbSSL, params.DbPassword)
 	case "mysql":
 		dbInfo = fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local", params.DbUser, params.DbPassword, params.DbHost, params.DbPort, params.DbName)
 		fmt.Println(dbInfo)
@@ -75,6 +76,7 @@ func InitDB() {
 
 	switch params.DbDriver {
 	case "postgres":
+		params.DbSSL = revel.Config.StringDefault("db.ssl", "disable")
 		params.DbPort = revel.Config.IntDefault("db.port", 5432)
 	case "mysql":
 		params.DbPort = revel.Config.IntDefault("db.port", 3306)
